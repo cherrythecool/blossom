@@ -10,7 +10,7 @@ Engine::Engine(int gameWidth, int gameHeight, const char* windowTitle) {
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE);
     InitWindow(gameWidth, gameHeight, windowTitle);
     #if _WIN32
-    registerWindowDarkMode(GetWindowHandle(), true);
+    WindowsWrappers::applyWindowDarkModeSetting(GetWindowHandle());
     #endif // _WIN32
 
     InitAudioDevice();
