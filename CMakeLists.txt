@@ -11,6 +11,9 @@ set(SOURCES
 
     src/engine/game/game.cpp
     src/engine/game/object.cpp
+    src/engine/game/sprite.cpp
+
+    src/engine/graphics/vectors.cpp
 )
 
 if(WIN32)
@@ -27,3 +30,10 @@ target_include_directories(blossom PUBLIC src)
 if(WIN32)
     target_link_libraries(blossom PRIVATE dwmapi)
 endif()
+
+# Copy assets
+add_custom_command(TARGET blossom POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/assets"
+        $<TARGET_FILE_DIR:blossom>/assets
+)

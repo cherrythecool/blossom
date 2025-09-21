@@ -1,5 +1,7 @@
 #include "engine/engine.hpp"
 
+#include "engine/game/sprite.hpp"
+
 #include "raylib.h"
 
 #if _WIN32
@@ -17,7 +19,7 @@ Engine::Engine(int gameWidth, int gameHeight, const char* windowTitle) {
     SetTargetFPS(0);
 
     game = new Game();
-    game->setScene(new Object());
+    game->setScene(new Sprite(64.0, 64.0, "assets/gfPixel.png"));
 }
 
 Engine::~Engine() {
