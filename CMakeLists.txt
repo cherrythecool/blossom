@@ -6,8 +6,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCES
     src/main.cpp
-    
+
     src/engine/engine.cpp
+
+    src/engine/assets/assets.cpp
 
     src/engine/game/game.cpp
     src/engine/game/object.cpp

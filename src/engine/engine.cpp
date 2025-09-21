@@ -1,5 +1,4 @@
 #include "engine/engine.hpp"
-
 #include "engine/game/sprite.hpp"
 
 #include "raylib.h"
@@ -18,12 +17,14 @@ Engine::Engine(int gameWidth, int gameHeight, const char* windowTitle) {
     InitAudioDevice();
     SetTargetFPS(0);
 
+    assets = new Assets();
     game = new Game();
-    game->setScene(new Sprite(64.0, 64.0, "assets/gfPixel.png"));
+    game->setScene(new Sprite(64.0, 64.0, "gfPixel.png"));
 }
 
 Engine::~Engine() {
     delete game;
+    delete assets;
     CloseAudioDevice();
     CloseWindow();
 }

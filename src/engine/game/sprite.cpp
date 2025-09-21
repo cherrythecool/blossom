@@ -1,5 +1,7 @@
 #include "engine/game/sprite.hpp"
 
+#include "engine/assets/assets.hpp"
+
 Sprite::Sprite(double x, double y, const char* initialTexturePath) {
     position = {x, y};
 
@@ -12,7 +14,7 @@ Sprite::Sprite(double x, double y, const char* initialTexturePath) {
 
 Sprite::~Sprite() {
     if (loadedTexture) {
-        UnloadTexture(texture);
+        Assets::instance->dereferenceTexture((const char*)texturePath);
     }
 }
 
@@ -42,12 +44,13 @@ void Sprite::event(ObjectEvent event) {
 }
 
 void Sprite::loadTexture(const char* path) {
-    Texture2D loading = LoadTexture(path);
+    Texture2D loading = Assets::instance->getTexture(path);
     if (IsTextureValid(loading)) {
         if (loadedTexture) {
-            UnloadTexture(texture);
+            Assets::instance->dereferenceTexture((const char*)texturePath);
         }
 
+        texturePath = (char*)path;
         texture = loading;
     }
 

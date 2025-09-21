@@ -11,6 +11,7 @@ class Sprite : public Object {
     private:
         Texture2D texture;
         GFX::TextureFilter textureFilter = GFX::TextureFilter::Linear;
+        char *texturePath = nullptr;
         bool loadedTexture = false;
 
     public:
