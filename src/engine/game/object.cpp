@@ -1,7 +1,6 @@
 #include "engine/game/object.hpp"
 
 #include <algorithm>
-#include <windows.h>
 
 Object::Object() {
 
