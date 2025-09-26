@@ -13,7 +13,7 @@ Sprite::Sprite(double x, double y, const char* initialTexturePath) {
 }
 
 Sprite::~Sprite() {
-    if (loadedTexture) {
+    if (isTextureLoaded()) {
         Assets::instance->dereferenceTexture((const char*)texturePath);
     }
 }
@@ -23,10 +23,19 @@ void Sprite::event(ObjectEvent event) {
 
     if (event.type == Update) {
         rotation += *((double*)event.data) * 90.0;
+
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            position.x = (double)GetMouseX();
+            position.y = (double)GetMouseY();
+        }
     }
 
     if (event.type == Draw) {
-        if (!loadedTexture) {
+        if (!visible) {
+            return;
+        }
+
+        if (!isTextureLoaded()) {
             return;
         }
 
@@ -46,7 +55,7 @@ void Sprite::event(ObjectEvent event) {
 void Sprite::loadTexture(const char* path) {
     Texture2D loading = Assets::instance->getTexture(path);
     if (IsTextureValid(loading)) {
-        if (loadedTexture) {
+        if (isTextureLoaded()) {
             Assets::instance->dereferenceTexture((const char*)texturePath);
         }
 
@@ -54,14 +63,17 @@ void Sprite::loadTexture(const char* path) {
         texture = loading;
     }
 
-    loadedTexture = IsTextureValid(texture);
     setTextureFilter(textureFilter);
+}
+
+bool Sprite::isTextureLoaded(void) {
+    return texturePath != nullptr;
 }
 
 void Sprite::setTextureFilter(GFX::TextureFilter filter) {
     textureFilter = filter;
 
-    if (loadedTexture) {
+    if (isTextureLoaded()) {
         SetTextureFilter(texture, textureFilter == GFX::TextureFilter::Linear ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
     }
 }

@@ -39,6 +39,7 @@ void Engine::run(void) {
         game->draw();
 
         DrawFPS(8, 8);
+
         EndDrawing();
     }
 }

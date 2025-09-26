@@ -28,6 +28,8 @@ add_executable(blossom ${SOURCES})
 
 target_link_libraries(blossom PUBLIC raylib)
 target_include_directories(blossom PUBLIC src)
+target_include_directories(blossom PRIVATE vendor/imgui)
+target_include_directories(blossom PRIVATE vendor/imgui/backends)
 
 if(WIN32)
     target_link_libraries(blossom PRIVATE dwmapi)

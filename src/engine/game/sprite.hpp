@@ -12,7 +12,6 @@ class Sprite : public Object {
         Texture2D texture;
         GFX::TextureFilter textureFilter = GFX::TextureFilter::Linear;
         char *texturePath = nullptr;
-        bool loadedTexture = false;
 
     public:
         GFX::Vector2 position = {0.0, 0.0};
@@ -26,6 +25,7 @@ class Sprite : public Object {
 
         virtual void event(ObjectEvent event);
         virtual void loadTexture(const char* path);
+        virtual bool isTextureLoaded(void);
         virtual void setTextureFilter(GFX::TextureFilter filter);
         virtual GFX::TextureFilter getTextureFilter(void);
 };
