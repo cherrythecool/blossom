@@ -1,5 +1,6 @@
 #include "engine/game/sprite.hpp"
 
+#include "engine/string.hpp"
 #include "engine/assets/assets.hpp"
 #include "engine/game/animation/animation_data.hpp"
 
@@ -24,26 +25,72 @@ Sprite::~Sprite() {
 void Sprite::event(ObjectEvent event) {
     Object::event(event);
 
-    if (event.type == Draw) {
-        if (!visible) {
-            return;
-        }
+    switch (event.type) {
+        case Update:
+            if (!animated) {
+                return;
+            }
 
-        if (!isTextureLoaded()) {
-            return;
-        }
+            frameTimer += *((double*)event.data);
+            if (currentAnimation.frameRate > 0.0) {
+                currentFrame = frameTimer / (1.0 / currentAnimation.frameRate);
+            } else {
+                currentFrame = 0;
+            }
 
-        GFX::Vector4 rgbaColor = color;
-        rgbaColor.scaleToRGBA();
-        DrawTexturePro(
-            texture,
-            {0, 0, (float)texture.width, (float)texture.height},
-            {(float)position.x, (float)position.y, (float)texture.width * (float)scale.x, (float)texture.height * (float)scale.y},
-            {((float)texture.width/2.0f) * (float)scale.x, ((float)texture.height/2.0f) * (float)scale.y},
-            rotation,
-            {(unsigned char)rgbaColor.x, (unsigned char)rgbaColor.y, (unsigned char)rgbaColor.z, (unsigned char)rgbaColor.w}
-        );
+            break;
+        case Draw:
+            if (!visible) {
+                return;
+            }
+
+            if (!isTextureLoaded()) {
+                return;
+            }
+
+            if (animated && currentAnimation.framesCount != 0) {
+                drawAnimated();
+            } else {
+                drawNotAnimated();
+            }
+
+            break;
+        default:
+            break;
     }
+}
+
+void Sprite::drawNotAnimated(void) {
+    GFX::Vector4 rgbaColor = color;
+    rgbaColor.scaleToRGBA();
+    DrawTexturePro(
+        texture,
+        {0, 0, (float)texture.width, (float)texture.height},
+        {(float)position.x, (float)position.y, (float)texture.width * (float)scale.x, (float)texture.height * (float)scale.y},
+        {(float)texture.width * (float)origin.x * (float)scale.x, (float)texture.height * (float)origin.y * (float)scale.y},
+        rotation,
+        {(unsigned char)rgbaColor.x, (unsigned char)rgbaColor.y, (unsigned char)rgbaColor.z, (unsigned char)rgbaColor.w}
+    );
+}
+
+void Sprite::drawAnimated(void) {
+    GFX::Vector4 rgbaColor = color;
+    rgbaColor.scaleToRGBA();
+
+    size_t index = 0;
+    if (currentFrame < currentAnimation.framesCount) {
+        index = currentAnimation.frames[currentFrame];
+    }
+
+    AnimationFrame frame = animationData.frames[index];
+    DrawTexturePro(
+        texture,
+        {(float)frame.region.x, (float)frame.region.y, (float)frame.region.z, (float)frame.region.w},
+        {(float)position.x, (float)position.y, (float)frame.region.z * (float)scale.x, (float)frame.region.w * (float)scale.y},
+        {(float)frame.region.z * (float)origin.x * (float)scale.x, (float)frame.region.w * (float)origin.y * (float)scale.y},
+        rotation,
+        {(unsigned char)rgbaColor.x, (unsigned char)rgbaColor.y, (unsigned char)rgbaColor.z, (unsigned char)rgbaColor.w}
+    );
 }
 
 void Sprite::loadTexture(const char* path) {
@@ -92,20 +139,6 @@ void Sprite::loadAnimationData(const char* path, bool clearAnimations) {
     animated = true;
 }
 
-// google ai overview code
-#include <string.h> // Required for strncmp and strlen
-
-// Function to check if a string starts with a given prefix
-int startsWith(const char* str, const char* prefix) {
-    // If the prefix is longer than the string, it cannot be a prefix
-    if (strlen(prefix) > strlen(str)) {
-        return 0; // False
-    }
-    // Compare the first 'strlen(prefix)' characters of 'str' and 'prefix'
-    // If they are identical, strncmp returns 0
-    return strncmp(str, prefix, strlen(prefix)) == 0;
-}
-
 void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop) {
     SpriteAnimation animation;
     animation.frameRate = frameRate;
@@ -113,7 +146,7 @@ void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, 
 
     for (size_t i = 0; i < animationData.framesCount; i++) {
         AnimationFrame frame = animationData.frames[i];
-        if (startsWith(frame.name.c_str(), prefix)) {
+        if (Strings::startsWith(frame.name.c_str(), prefix)) {
             animation.framesCount++;
         }
     }
@@ -122,7 +155,7 @@ void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, 
     size_t index = 0;
     for (size_t i = 0; i < animationData.framesCount; i++) {
         AnimationFrame frame = animationData.frames[i];
-        if (startsWith(frame.name.c_str(), prefix)) {
+        if (Strings::startsWith(frame.name.c_str(), prefix)) {
             animation.frames[index++] = i;
         }
     }
@@ -138,4 +171,13 @@ void Sprite::playAnimation(const char* id) {
 
     currentAnimation = animation;
     currentFrame = 0;
+}
+
+void Sprite::setFrame(size_t frame) {
+    currentFrame = frame;
+    frameTimer = 0.0;
+}
+
+size_t Sprite::getFrame(void) {
+    return currentFrame;
 }

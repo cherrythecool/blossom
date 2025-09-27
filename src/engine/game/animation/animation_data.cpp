@@ -14,12 +14,29 @@ AnimationData AnimationData::loadFromSparrow(const char* path) {
     document.LoadFile(path);
 
     if (document.Error()) {
-        printf("Error loading animation data from sparrow file: %s\n", path);
+        fprintf(stderr, "Error loading animation data from sparrow file: %s\n", path);
         return data;
     }
 
     tinyxml2::XMLNode* rootNode = document.FirstChild();
+    if (rootNode == nullptr) {
+        return data;
+    }
+
+    tinyxml2::XMLDeclaration* declaration = rootNode->ToDeclaration();
+    if (declaration != nullptr) {
+        rootNode = rootNode->NextSibling();
+
+        if (rootNode == nullptr) {
+            fprintf(stderr, "Sparrow atlas only contains XML version declaration: %s\n", path);
+            return data;
+        }
+    }
+
     tinyxml2::XMLElement* rootElement = rootNode->ToElement();
+    if (rootElement == nullptr) {
+        return data;
+    }
 
     if (strcmp(rootElement->Name(), "TextureAtlas") != 0) {
         return data;

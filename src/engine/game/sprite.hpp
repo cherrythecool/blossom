@@ -26,15 +26,20 @@ class Sprite : public Object {
         AnimationData animationData;
         std::map<std::string, SpriteAnimation> animations;
         SpriteAnimation currentAnimation;
+        size_t currentFrame = 0;
+        double frameTimer = 0.0;
+
+        void drawNotAnimated(void);
+        void drawAnimated(void);
 
     public:
         GFX::Vector2 position = {0.0, 0.0};
         GFX::Vector2 scale = {1.0, 1.0};
+        GFX::Vector2 origin = {0.5, 0.5};
         double rotation = 0.0;
         GFX::Vector4 color = {1.0, 1.0, 1.0, 1.0};
         bool visible = true;
         bool animated = false;
-        size_t currentFrame = 0;
 
         Sprite(double x, double y, const char* initialTexturePath = nullptr);
         virtual ~Sprite();
@@ -48,6 +53,9 @@ class Sprite : public Object {
         virtual void loadAnimationData(const char* path, bool clearAnimations = true);
         virtual void addAnimation(const char* id, const char* prefix, double frameRate, bool loop);
         virtual void playAnimation(const char* id);
+
+        virtual void setFrame(size_t frame);
+        virtual size_t getFrame(void);
 };
 
 #endif // !BLOSSOM_ENGINE_GAME_OBJECT_HEADER

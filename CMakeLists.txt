@@ -9,6 +9,7 @@ set(SOURCES
     src/main.cpp
 
     src/engine/engine.cpp
+    src/engine/string.cpp
 
     src/engine/assets/assets.cpp
 

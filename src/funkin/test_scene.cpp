@@ -9,6 +9,7 @@ TestScene::TestScene() {
     dad->loadAnimationData("daddyDearest.xml");
     dad->addAnimation("idle", "idle", 24.0, true);
     dad->playAnimation("idle");
+    dad->origin.set(0.0, 0.0);
     append(dad);
 }
 

@@ -2,6 +2,11 @@
 #include "engine/graphics/math.hpp"
 
 namespace GFX {
+    void Vector2::set(double _x, double _y) {
+        x = _x;
+        y = _y;
+    }
+
     void Vector2::add(Vector2 vector) {
         x += vector.x;
         y += vector.y;
@@ -25,6 +30,12 @@ namespace GFX {
     void Vector2::scale(double factor) {
         x *= factor;
         y *= factor;
+    }
+
+    void Vector3::set(double _x, double _y, double _z) {
+        x = _x;
+        y = _y;
+        z = _z;
     }
 
     void Vector3::add(Vector3 vector) {
@@ -55,6 +66,13 @@ namespace GFX {
         x *= factor;
         y *= factor;
         z *= factor;
+    }
+
+    void Vector4::set(double _x, double _y, double _z, double _w) {
+        x = _x;
+        y = _y;
+        z = _z;
+        w = _w;
     }
 
     void Vector4::add(Vector4 vector) {
