@@ -1,6 +1,7 @@
 #include "engine/game/sprite.hpp"
 
 #include "engine/assets/assets.hpp"
+#include "engine/game/animation/animation_data.hpp"
 
 Sprite::Sprite(double x, double y, const char* initialTexturePath) {
     position = {x, y};
@@ -8,27 +9,20 @@ Sprite::Sprite(double x, double y, const char* initialTexturePath) {
     if (initialTexturePath != nullptr) {
         loadTexture(initialTexturePath);
     }
-
-    scale.scale(6.0);
 }
 
 Sprite::~Sprite() {
     if (isTextureLoaded()) {
         Assets::instance->dereferenceTexture((const char*)texturePath);
     }
+
+    for (std::pair<std::string, SpriteAnimation> pair : animations) {
+        delete[] pair.second.frames;
+    }
 }
 
 void Sprite::event(ObjectEvent event) {
     Object::event(event);
-
-    if (event.type == Update) {
-        rotation += *((double*)event.data) * 90.0;
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-            position.x = (double)GetMouseX();
-            position.y = (double)GetMouseY();
-        }
-    }
 
     if (event.type == Draw) {
         if (!visible) {
@@ -80,4 +74,68 @@ void Sprite::setTextureFilter(GFX::TextureFilter filter) {
 
 GFX::TextureFilter Sprite::getTextureFilter(void) {
     return textureFilter;
+}
+
+void Sprite::loadAnimationData(const char* path, bool clearAnimations) {
+    if (clearAnimations) {
+        animations.clear();
+        animationData = {};
+        animated = false;
+    }
+
+    AnimationData data = Assets::instance->getAnimation(path);
+    if (data.frames == nullptr) {
+        return;
+    }
+
+    animationData = data;
+    animated = true;
+}
+
+// google ai overview code
+#include <string.h> // Required for strncmp and strlen
+
+// Function to check if a string starts with a given prefix
+int startsWith(const char* str, const char* prefix) {
+    // If the prefix is longer than the string, it cannot be a prefix
+    if (strlen(prefix) > strlen(str)) {
+        return 0; // False
+    }
+    // Compare the first 'strlen(prefix)' characters of 'str' and 'prefix'
+    // If they are identical, strncmp returns 0
+    return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop) {
+    SpriteAnimation animation;
+    animation.frameRate = frameRate;
+    animation.loop = loop;
+
+    for (size_t i = 0; i < animationData.framesCount; i++) {
+        AnimationFrame frame = animationData.frames[i];
+        if (startsWith(frame.name.c_str(), prefix)) {
+            animation.framesCount++;
+        }
+    }
+
+    animation.frames = new size_t[animation.framesCount];
+    size_t index = 0;
+    for (size_t i = 0; i < animationData.framesCount; i++) {
+        AnimationFrame frame = animationData.frames[i];
+        if (startsWith(frame.name.c_str(), prefix)) {
+            animation.frames[index++] = i;
+        }
+    }
+
+    animations[std::string(id)] = animation;
+}
+
+void Sprite::playAnimation(const char* id) {
+    SpriteAnimation animation = animations[std::string(id)];
+    if (animation.framesCount == 0) {
+        return;
+    }
+
+    currentAnimation = animation;
+    currentFrame = 0;
 }

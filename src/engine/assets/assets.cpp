@@ -1,4 +1,5 @@
 #include "engine/assets/assets.hpp"
+#include "engine/game/animation/animation_data.hpp"
 
 #include <iostream>
 
@@ -10,9 +11,12 @@ Assets::Assets() {
 }
 
 Assets::~Assets() {
-    for (auto& texture : textures) {
-        UnloadTexture(texture.second);
+    for (std::pair<std::string, Texture2D> pair : textures) {
+        UnloadTexture(pair.second);
     }
+
+    animations.clear();
+    animationReferences.clear();
 
     if (instance == this) {
         instance = nullptr;
@@ -71,5 +75,35 @@ void Assets::unloadTexture(const char* path) {
         UnloadTexture(textures[fullPath]);
         textures.erase(fullPath);
         textureReferences.erase(fullPath);
+    }
+}
+
+AnimationData Assets::getAnimation(const char* path) {
+    std::string fullPath = getFullPath(path);
+    if (animations.find(fullPath) == animations.end()) {
+        animations[fullPath] = AnimationData::loadFromSparrow(fullPath.c_str());
+    }
+
+    animationReferences[fullPath] += 1;
+    return animations[fullPath];
+}
+
+void Assets::dereferenceAnimation(const char* path) {
+    std::string fullPath = getFullPath(path);
+    if (animationReferences.find(fullPath) != animationReferences.end()) {
+        if (animationReferences[fullPath] == 0) {
+            std::cerr << "WARNING: Dereferencing animation that has no references left, most likely a double dereference! Path: " << fullPath << std::endl;
+        }
+
+        animationReferences[fullPath] -= 1;
+    }
+}
+
+void Assets::unloadAnimation(const char* path) {
+    std::string fullPath = getFullPath(path);
+    if (animations.find(fullPath) != animations.end()) {
+        delete[] animations[fullPath].frames;
+        animations.erase(fullPath);
+        animationReferences.erase(fullPath);
     }
 }

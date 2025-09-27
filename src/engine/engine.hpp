@@ -13,6 +13,7 @@ class Engine {
         Engine(int gameWidth, int gameHeight, const char* windowTitle);
         ~Engine();
 
+        Game* get_game(void);
         void run(void);
 };
 

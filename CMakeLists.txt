@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(blossom)
 
 add_subdirectory(vendor/raylib)
+add_subdirectory(vendor/tinyxml2)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCES
@@ -15,7 +16,14 @@ set(SOURCES
     src/engine/game/object.cpp
     src/engine/game/sprite.cpp
 
+    src/engine/game/animation/animation_data.cpp
+
     src/engine/graphics/vectors.cpp
+)
+
+# Game specific
+set(SOURCES ${SOURCES}
+    src/funkin/test_scene.cpp
 )
 
 if(WIN32)
@@ -27,9 +35,8 @@ endif()
 add_executable(blossom ${SOURCES})
 
 target_link_libraries(blossom PUBLIC raylib)
+target_link_libraries(blossom PUBLIC tinyxml2)
 target_include_directories(blossom PUBLIC src)
-target_include_directories(blossom PRIVATE vendor/imgui)
-target_include_directories(blossom PRIVATE vendor/imgui/backends)
 
 if(WIN32)
     target_link_libraries(blossom PRIVATE dwmapi)
