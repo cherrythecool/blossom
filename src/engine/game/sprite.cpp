@@ -32,11 +32,7 @@ void Sprite::event(ObjectEvent event) {
             }
 
             frameTimer += *((double*)event.data);
-            if (currentAnimation.frameRate > 0.0) {
-                currentFrame = frameTimer / (1.0 / currentAnimation.frameRate);
-            } else {
-                currentFrame = 0;
-            }
+            recalculateFrame();
 
             break;
         case Draw:
@@ -48,6 +44,14 @@ void Sprite::event(ObjectEvent event) {
                 return;
             }
 
+            if (scale.x < 0.0) {
+                scale.x = 0.0;
+            }
+
+            if (scale.y < 0.0) {
+                scale.y = 0.0;
+            }
+
             if (animated && currentAnimation.framesCount != 0) {
                 drawAnimated();
             } else {
@@ -57,6 +61,21 @@ void Sprite::event(ObjectEvent event) {
             break;
         default:
             break;
+    }
+}
+
+void Sprite::recalculateFrame(void) {
+    if (currentAnimation.frameRate <= 0.0) {
+        currentFrame = 0;
+        return;
+    }
+
+    currentFrame = frameTimer / (1.0 / currentAnimation.frameRate);
+
+    if (currentAnimation.loop) {
+        currentFrame = currentFrame % currentAnimation.framesCount;
+    } else {
+        currentFrame = currentFrame < currentAnimation.framesCount ? currentFrame : currentAnimation.framesCount - 1;
     }
 }
 
@@ -83,14 +102,60 @@ void Sprite::drawAnimated(void) {
     }
 
     AnimationFrame frame = animationData.frames[index];
-    DrawTexturePro(
-        texture,
-        {(float)frame.region.x, (float)frame.region.y, (float)frame.region.z, (float)frame.region.w},
-        {(float)position.x, (float)position.y, (float)frame.region.z * (float)scale.x, (float)frame.region.w * (float)scale.y},
-        {(float)frame.region.z * (float)origin.x * (float)scale.x, (float)frame.region.w * (float)origin.y * (float)scale.y},
-        rotation,
-        {(unsigned char)rgbaColor.x, (unsigned char)rgbaColor.y, (unsigned char)rgbaColor.z, (unsigned char)rgbaColor.w}
-    );
+    GFX::Vector2 drawingBox = frame.boundingBox;
+    switch (frame.rotation) {
+        case RotationNinety:
+            drawingBox.x = frame.boundingBox.y;
+            drawingBox.y = frame.boundingBox.x;
+            break;
+        default:
+            break;
+    }
+
+    Rectangle drawDestination = {
+        (float)position.x - ((float)frame.offset.x * (float)scale.x),
+        (float)position.y - ((float)frame.offset.y * (float)scale.y),
+        (float)frame.region.z * (float)scale.x,
+        (float)frame.region.w * (float)scale.y
+    };
+
+    Vector2 drawOrigin = {
+        (float)drawingBox.x * (float)origin.x * (float)scale.x,
+        (float)drawingBox.y * (float)origin.y * (float)scale.y
+    };
+    drawDestination.x += (float)drawingBox.x * (float)scale.x * 0.5f;
+    drawDestination.y += (float)drawingBox.y * (float)scale.y * 0.5f;
+
+    drawDestination.x -= drawOrigin.x;
+    drawDestination.y -= drawOrigin.y;
+
+    double drawRotation = rotation;
+
+    switch (frame.rotation) {
+        case RotationNinety:
+            drawRotation -= 90.0;
+        default:
+            DrawTexturePro(
+                texture,
+                {
+                    (float)frame.region.x,
+                    (float)frame.region.y,
+                    (float)frame.region.z,
+                    (float)frame.region.w
+                },
+                drawDestination,
+        {(float)drawingBox.x * (float)scale.x * 0.5f, (float)drawingBox.y * (float)scale.y * 0.5f},
+                drawRotation,
+                {
+                    (unsigned char)rgbaColor.x,
+                    (unsigned char)rgbaColor.y,
+                    (unsigned char)rgbaColor.z,
+                    (unsigned char)rgbaColor.w
+                }
+            );
+
+            break;
+    }
 }
 
 void Sprite::loadTexture(const char* path) {

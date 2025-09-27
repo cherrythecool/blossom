@@ -7,12 +7,13 @@
 
 enum FrameRotation {
     RotationNone = 0,
-    RotationNegativeNinety
+    RotationNinety
 };
 
 struct AnimationFrame {
     GFX::Vector4 region;
     GFX::Vector2 offset;
+    GFX::Vector2 boundingBox;
     std::string name;
     FrameRotation rotation;
 };

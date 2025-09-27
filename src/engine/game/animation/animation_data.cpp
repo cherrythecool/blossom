@@ -57,6 +57,8 @@ AnimationData AnimationData::loadFromSparrow(const char* path) {
             const char* heightStr = animationElement->Attribute("height");
             const char* frameXStr = animationElement->Attribute("frameX");
             const char* frameYStr = animationElement->Attribute("frameY");
+            const char* frameWidthStr = animationElement->Attribute("frameWidth");
+            const char* frameHeightStr = animationElement->Attribute("frameHeight");
             const char* rotatedStr = animationElement->Attribute("rotated");
 
             if (name != nullptr && xStr != nullptr && yStr != nullptr && widthStr != nullptr && heightStr != nullptr) {
@@ -81,8 +83,22 @@ AnimationData AnimationData::loadFromSparrow(const char* path) {
                     };
                 }
 
+                if (frameWidthStr != nullptr && frameHeightStr != nullptr) {
+                    frame.boundingBox = {
+                        atof(frameWidthStr),
+                        atof(frameHeightStr)
+                    };
+                } else {
+                    frame.boundingBox = {
+                        frame.region.z,
+                        frame.region.w
+                    };
+                }
+
                 if (rotatedStr != nullptr && strcmp(rotatedStr, "true") == 0) {
-                    frame.rotation = RotationNegativeNinety;
+                    frame.rotation = RotationNinety;
+                } else {
+                    frame.rotation = RotationNone;
                 }
 
                 data.frames[frameIndex] = frame;

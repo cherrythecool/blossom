@@ -29,6 +29,7 @@ class Sprite : public Object {
         size_t currentFrame = 0;
         double frameTimer = 0.0;
 
+        void recalculateFrame(void);
         void drawNotAnimated(void);
         void drawAnimated(void);
 
