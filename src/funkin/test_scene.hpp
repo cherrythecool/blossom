@@ -3,11 +3,15 @@
 
 #include "engine/game/object.hpp"
 #include "engine/game/sprite.hpp"
+#include "engine/game/camera.hpp"
 
 class TestScene : public Object {
     private:
         Sprite* background;
         Sprite* dad;
+        Sprite* darnell;
+        CameraObject* mainCamera;
+        CameraObject* hudCamera;
 
     public:
         TestScene();

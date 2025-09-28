@@ -15,6 +15,7 @@ struct SpriteAnimation {
     bool loop;
     size_t* frames;
     size_t framesCount;
+    GFX::Vector2 offset;
 };
 
 class Sprite : public Object {
@@ -53,11 +54,11 @@ class Sprite : public Object {
         virtual GFX::TextureFilter getTextureFilter(void);
 
         virtual void loadAnimationData(const char* path, bool clearAnimations = true);
-        virtual void addAnimation(const char* id, const char* prefix, double frameRate, bool loop);
+        virtual void addAnimation(const char* id, const char* prefix, double frameRate = 24.0, bool loop = false, GFX::Vector2 offset = {0.0, 0.0});
         virtual void playAnimation(const char* id);
 
-        virtual void setFrame(size_t frame);
-        virtual size_t getFrame(void);
+        virtual void setAnimationFrame(size_t frame);
+        virtual size_t getAnimationFrame(void);
 };
 
 #endif // !BLOSSOM_ENGINE_GAME_OBJECT_HEADER

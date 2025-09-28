@@ -16,6 +16,7 @@ set(SOURCES
     src/engine/game/game.cpp
     src/engine/game/object.cpp
     src/engine/game/sprite.cpp
+    src/engine/game/camera.cpp
 
     src/engine/game/animation/animation_data.cpp
 

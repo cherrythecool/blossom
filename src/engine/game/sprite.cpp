@@ -116,12 +116,18 @@ void Sprite::drawAnimated(void) {
         (float)frame.region.w * (float)scale.y
     };
 
+    // Accounting for bounding box centering with origin shit
+    drawDestination.x += (float)drawingBox.x * (float)scale.x * 0.5f;
+    drawDestination.y += (float)drawingBox.y * (float)scale.y * 0.5f;
+
+    // Animation offsets
+    drawDestination.x += (float)currentAnimation.offset.x * (float)scale.x;
+    drawDestination.y += (float)currentAnimation.offset.y * (float)scale.y;
+
     Vector2 drawOrigin = {
         (float)drawingBox.x * (float)origin.x * (float)scale.x,
         (float)drawingBox.y * (float)origin.y * (float)scale.y
     };
-    drawDestination.x += (float)drawingBox.x * (float)scale.x * 0.5f;
-    drawDestination.y += (float)drawingBox.y * (float)scale.y * 0.5f;
 
     drawDestination.x -= drawOrigin.x;
     drawDestination.y -= drawOrigin.y;
@@ -201,10 +207,11 @@ void Sprite::loadAnimationData(const char* path, bool clearAnimations) {
     animated = true;
 }
 
-void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop) {
+void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop, GFX::Vector2 offset) {
     SpriteAnimation animation = {0};
     animation.frameRate = frameRate;
     animation.loop = loop;
+    animation.offset = offset;
 
     for (size_t i = 0; i < animationData.framesCount; i++) {
         AnimationFrame frame = animationData.frames[i];
@@ -237,11 +244,11 @@ void Sprite::playAnimation(const char* id) {
     playing = true;
 }
 
-void Sprite::setFrame(size_t frame) {
+void Sprite::setAnimationFrame(size_t frame) {
     frameTimer = (double)frame / currentAnimation.frameRate;
 }
 
-size_t Sprite::getFrame(void) {
+size_t Sprite::getAnimationFrame(void) {
     recalculateFrame();
     return currentFrame;
 }
