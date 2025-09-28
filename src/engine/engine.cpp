@@ -6,7 +6,11 @@
 #include "engine/windows.hpp"
 #endif // _WIN32
 
+Engine* Engine::instance;
+
 Engine::Engine(int gameWidth, int gameHeight, const char* windowTitle) {
+    instance = this;
+
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE);
     InitWindow(gameWidth, gameHeight, windowTitle);
     #if _WIN32
@@ -25,9 +29,13 @@ Engine::~Engine() {
     delete assets;
     CloseAudioDevice();
     CloseWindow();
+
+    if (instance == this) {
+        instance = nullptr;
+    }
 }
 
-Game* Engine::get_game(void) {
+Game* Engine::getGame(void) {
     return game;
 }
 
@@ -44,4 +52,15 @@ void Engine::run(void) {
 
         EndDrawing();
     }
+}
+
+void Engine::switchScene(Object* scene, bool destroyLast) {
+    Object* lastScene = game->getScene();
+    game->setScene(scene);
+
+    if (destroyLast && lastScene != nullptr) {
+        delete lastScene;
+    }
+
+    assets->clean();
 }

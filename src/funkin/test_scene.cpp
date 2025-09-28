@@ -1,4 +1,7 @@
 #include "funkin/test_scene.hpp"
+
+#include "engine/engine.hpp"
+
 #include "raylib.h"
 
 TestScene::TestScene() {
@@ -90,6 +93,10 @@ void TestScene::event(ObjectEvent event) {
 
             if (IsKeyPressed(KEY_RIGHT)) {
                 darnell->playAnimation("singRIGHT");
+            }
+
+            if (IsKeyPressed(KEY_Q)) {
+                Engine::instance->switchScene(new Object());
             }
 
             break;

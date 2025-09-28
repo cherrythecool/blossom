@@ -10,11 +10,15 @@ class Engine {
         Assets* assets;
 
     public:
+        static Engine* instance;
+
         Engine(int gameWidth, int gameHeight, const char* windowTitle);
         ~Engine();
 
-        Game* get_game(void);
+        Game* getGame(void);
         void run(void);
+
+        void switchScene(Object* scene, bool destroyLast = true);
 };
 
 #endif // !BLOSSOM_ENGINE_HEADER
