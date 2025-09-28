@@ -5,13 +5,15 @@
 #include "engine/game/sprite.hpp"
 #include "engine/game/camera.hpp"
 
+using namespace Blossom;
+
 class TestScene : public Object {
     private:
         Sprite* background;
         Sprite* dad;
         Sprite* darnell;
-        CameraObject* mainCamera;
-        CameraObject* hudCamera;
+        Blossom::Camera* mainCamera;
+        Blossom::Camera* hudCamera;
 
     public:
         TestScene();

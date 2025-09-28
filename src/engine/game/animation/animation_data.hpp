@@ -5,25 +5,27 @@
 #include <stddef.h>
 #include <string>
 
-enum FrameRotation {
-    RotationNone = 0,
-    RotationNinety
-};
+namespace Blossom {
+    enum FrameRotation {
+        RotationNone = 0,
+        RotationNinety
+    };
 
-struct AnimationFrame {
-    GFX::Vector4 region;
-    GFX::Vector2 offset;
-    GFX::Vector2 boundingBox;
-    std::string name;
-    FrameRotation rotation;
-};
+    struct AnimationFrame {
+        Blossom::Vector4 region;
+        Blossom::Vector2 offset;
+        Blossom::Vector2 boundingBox;
+        std::string name;
+        FrameRotation rotation;
+    };
 
-struct AnimationData {
-    AnimationFrame* frames;
-    size_t framesCount;
-    size_t references;
+    struct AnimationData {
+        AnimationFrame* frames;
+        size_t framesCount;
+        size_t references;
 
-    static AnimationData loadFromSparrow(const char* path);
-};
+        static AnimationData loadFromSparrow(const char* path);
+    };
+}
 
 #endif // !BLOSSOM_ENGINE_GAME_ANIMATION_ANIMATION_DATA_HEADER

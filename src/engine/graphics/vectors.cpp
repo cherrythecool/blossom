@@ -1,7 +1,7 @@
 #include "engine/graphics/vectors.hpp"
 #include "engine/graphics/math.hpp"
 
-namespace GFX {
+namespace Blossom {
     void Vector4::scaleToRGBA(void) {
         x = clamp(x * 255.0, 0.0, 255.0);
         y = clamp(y * 255.0, 0.0, 255.0);

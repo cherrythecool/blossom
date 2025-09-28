@@ -1,7 +1,7 @@
 #ifndef BLOSSOM_ENGINE_GRAPHICS_VECTORS_HEADER
 #define BLOSSOM_ENGINE_GRAPHICS_VECTORS_HEADER
 
-namespace GFX {
+namespace Blossom {
     struct Vector2 {
         double x, y;
     };

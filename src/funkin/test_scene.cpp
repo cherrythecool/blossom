@@ -11,13 +11,18 @@ TestScene::TestScene() {
     dad->playAnimation("idle");
     append(dad);
 
-    mainCamera = new CameraObject();
+    mainCamera = new Blossom::Camera();
     mainCamera->position = {640.0, 360.0};
     append(mainCamera);
 
-    hudCamera = new CameraObject();
+    hudCamera = new Blossom::Camera();
     hudCamera->position = {640.0, 360.0};
     append(hudCamera);
+
+    Blossom::Camera* poop = new Blossom::Camera();
+    append(poop);
+
+
 
     background = new Sprite(0.0, 0.0, "phillyForeground.png");
     background->origin = {0.0, 0.0};

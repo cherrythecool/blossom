@@ -3,9 +3,11 @@
 
 #include <string>
 
-namespace Strings {
-    bool startsWith(const char* string, const char* prefix);
-    bool startsWith(std::string string, std::string prefix);
+namespace Blossom {
+    namespace Strings {
+        bool startsWith(const char* string, const char* prefix);
+        bool startsWith(std::string string, std::string prefix);
+    }
 }
 
 #endif // !BLOSSOM_ENGINE_STRING_HEADER
