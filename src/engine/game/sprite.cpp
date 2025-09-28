@@ -71,7 +71,6 @@ void Sprite::recalculateFrame(void) {
     }
 
     currentFrame = frameTimer / (1.0 / currentAnimation.frameRate);
-
     if (currentAnimation.loop) {
         currentFrame = currentFrame % currentAnimation.framesCount;
     } else {
@@ -144,7 +143,7 @@ void Sprite::drawAnimated(void) {
                     (float)frame.region.w
                 },
                 drawDestination,
-        {(float)drawingBox.x * (float)scale.x * 0.5f, (float)drawingBox.y * (float)scale.y * 0.5f},
+                {(float)drawingBox.x * (float)scale.x * 0.5f, (float)drawingBox.y * (float)scale.y * 0.5f},
                 drawRotation,
                 {
                     (unsigned char)rgbaColor.x,
@@ -205,7 +204,7 @@ void Sprite::loadAnimationData(const char* path, bool clearAnimations) {
 }
 
 void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop) {
-    SpriteAnimation animation;
+    SpriteAnimation animation = {0};
     animation.frameRate = frameRate;
     animation.loop = loop;
 
@@ -235,14 +234,14 @@ void Sprite::playAnimation(const char* id) {
     }
 
     currentAnimation = animation;
-    currentFrame = 0;
-}
-
-void Sprite::setFrame(size_t frame) {
-    currentFrame = frame;
     frameTimer = 0.0;
 }
 
+void Sprite::setFrame(size_t frame) {
+    frameTimer = (double)frame * (1.0 / currentAnimation.frameRate);
+}
+
 size_t Sprite::getFrame(void) {
+    recalculateFrame();
     return currentFrame;
 }
