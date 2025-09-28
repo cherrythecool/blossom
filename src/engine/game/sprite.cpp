@@ -31,8 +31,10 @@ void Sprite::event(ObjectEvent event) {
                 return;
             }
 
-            frameTimer += *((double*)event.data);
-            recalculateFrame();
+            if (playing) {
+                frameTimer += *((double*)event.data);
+                recalculateFrame();
+            }
 
             break;
         case Draw:
@@ -70,7 +72,7 @@ void Sprite::recalculateFrame(void) {
         return;
     }
 
-    currentFrame = frameTimer / (1.0 / currentAnimation.frameRate);
+    currentFrame = frameTimer * currentAnimation.frameRate;
     if (currentAnimation.loop) {
         currentFrame = currentFrame % currentAnimation.framesCount;
     } else {
@@ -95,11 +97,7 @@ void Sprite::drawAnimated(void) {
     GFX::Vector4 rgbaColor = color;
     rgbaColor.scaleToRGBA();
 
-    size_t index = 0;
-    if (currentFrame < currentAnimation.framesCount) {
-        index = currentAnimation.frames[currentFrame];
-    }
-
+    size_t index = currentAnimation.frames[currentFrame];
     AnimationFrame frame = animationData.frames[index];
     GFX::Vector2 drawingBox = frame.boundingBox;
     switch (frame.rotation) {
@@ -216,11 +214,12 @@ void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, 
     }
 
     animation.frames = new size_t[animation.framesCount];
-    size_t index = 0;
+
+    size_t framesIndex = 0;
     for (size_t i = 0; i < animationData.framesCount; i++) {
         AnimationFrame frame = animationData.frames[i];
         if (Strings::startsWith(frame.name.c_str(), prefix)) {
-            animation.frames[index++] = i;
+            animation.frames[framesIndex++] = i;
         }
     }
 
@@ -235,10 +234,11 @@ void Sprite::playAnimation(const char* id) {
 
     currentAnimation = animation;
     frameTimer = 0.0;
+    playing = true;
 }
 
 void Sprite::setFrame(size_t frame) {
-    frameTimer = (double)frame * (1.0 / currentAnimation.frameRate);
+    frameTimer = (double)frame / currentAnimation.frameRate;
 }
 
 size_t Sprite::getFrame(void) {

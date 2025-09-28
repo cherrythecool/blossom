@@ -22,11 +22,15 @@ void TestScene::event(ObjectEvent event) {
         case Update: {
             double elapsed = *((double*)event.data);
             if (IsKeyDown(KEY_A)) {
-                dad->scale.subtract({elapsed * 0.5, elapsed * 0.5});
+                dad->scale = {dad->scale.x - (elapsed * 0.5), dad->scale.y - (elapsed * 0.5)};
             }
 
             if (IsKeyDown(KEY_D)) {
-                dad->scale.add({elapsed * 0.5, elapsed * 0.5});
+                dad->scale = {dad->scale.x + (elapsed * 0.5), dad->scale.y + (elapsed * 0.5)};
+            }
+
+            if (IsKeyPressed(KEY_SPACE)) {
+                dad->playing = !dad->playing;
             }
 
             break;

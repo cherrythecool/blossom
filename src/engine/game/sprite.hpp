@@ -41,6 +41,7 @@ class Sprite : public Object {
         GFX::Vector4 color = {1.0, 1.0, 1.0, 1.0};
         bool visible = true;
         bool animated = false;
+        bool playing = true;
 
         Sprite(double x, double y, const char* initialTexturePath = nullptr);
         virtual ~Sprite();
