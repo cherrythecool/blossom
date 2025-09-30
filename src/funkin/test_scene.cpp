@@ -19,11 +19,6 @@ TestScene::TestScene() {
     hudCamera->position = {640.0, 360.0};
     append(hudCamera);
 
-    Blossom::Camera* poop = new Blossom::Camera();
-    append(poop);
-
-
-
     background = new Sprite(0.0, 0.0, "phillyForeground.png");
     background->origin = {0.0, 0.0};
     mainCamera->append(background);

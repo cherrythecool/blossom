@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(blossom)
 
+add_compile_definitions(SUPPORT_FILEFORMAT_FLAC=1)
 add_subdirectory(vendor/raylib)
 add_subdirectory(vendor/tinyxml2)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
