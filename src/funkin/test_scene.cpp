@@ -2,6 +2,7 @@
 
 #include "engine/engine.hpp"
 
+#include "engine/game/sound_player.hpp"
 #include "raylib.h"
 
 TestScene::TestScene() {
@@ -32,9 +33,24 @@ TestScene::TestScene() {
     darnell->addAnimation("singRIGHT", "Pose Right", 24.0, false, {-4.0, -3.0});
     darnell->playAnimation("idle");
     hudCamera->append(darnell);
+
+    inst = new SoundPlayer("songs/2hot/tracks/Inst.ogg", true);
+    inst->play();
+    append(inst);
+
+    voicesDarnell = new SoundPlayer("songs/2hot/tracks/Voices-darnell.ogg", true);
+    voicesDarnell->play();
+    append(voicesDarnell);
+
+    voicesPico = new SoundPlayer("songs/2hot/tracks/Voices-pico.ogg", true);
+    voicesPico->play();
+    append(voicesPico);
 }
 
 TestScene::~TestScene() {
+    delete inst;
+    delete voicesDarnell;
+    delete voicesPico;
     delete background;
     delete dad;
     delete darnell;
@@ -97,6 +113,7 @@ void TestScene::event(ObjectEvent event) {
 
             if (IsKeyPressed(KEY_Q)) {
                 Engine::instance->switchScene(new Object());
+                return;
             }
 
             break;

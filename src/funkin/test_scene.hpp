@@ -4,6 +4,7 @@
 #include "engine/game/object.hpp"
 #include "engine/game/sprite.hpp"
 #include "engine/game/camera.hpp"
+#include "engine/game/sound_player.hpp"
 
 using namespace Blossom;
 
@@ -14,6 +15,9 @@ class TestScene : public Object {
         Sprite* darnell;
         Blossom::Camera* mainCamera;
         Blossom::Camera* hudCamera;
+        SoundPlayer* inst;
+        SoundPlayer* voicesDarnell;
+        SoundPlayer* voicesPico;
 
     public:
         TestScene();

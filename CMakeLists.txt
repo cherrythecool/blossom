@@ -18,6 +18,7 @@ set(SOURCES
     src/engine/game/object.cpp
     src/engine/game/sprite.cpp
     src/engine/game/camera.cpp
+    src/engine/game/sound_player.cpp
 
     src/engine/game/animation/animation_data.cpp
 
@@ -43,6 +44,12 @@ target_include_directories(blossom PUBLIC src)
 
 if(WIN32)
     target_link_libraries(blossom PRIVATE dwmapi)
+endif()
+
+if(MSVC)
+    target_compile_options(blossom PRIVATE /W4)
+else()
+    target_compile_options(blossom PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # Copy assets

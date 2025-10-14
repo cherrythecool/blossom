@@ -14,11 +14,13 @@ namespace Blossom {
             std::map<std::string, Texture2D> textures;
             std::map<std::string, size_t> textureReferences;
 
+            std::map<std::string, Sound> sounds;
+            std::map<std::string, size_t> soundReferences;
+
             std::map<std::string, AnimationData> animations;
             std::map<std::string, size_t> animationReferences;
 
             std::string rootPath;
-            std::string getFullPath(const char* path);
 
         public:
             static Assets* instance;
@@ -28,6 +30,7 @@ namespace Blossom {
 
             void clean(void);
             void setRootPath(const char* path);
+            std::string getFullPath(const char* path);
 
             Texture2D getTexture(const char* path);
             void dereferenceTexture(const char* path);
@@ -36,6 +39,10 @@ namespace Blossom {
             AnimationData getAnimation(const char* path);
             void dereferenceAnimation(const char* path);
             void unloadAnimation(const char* path);
+
+            Sound getSound(const char* path);
+            void dereferenceSound(const char* path);
+            void unloadSound(const char* path);
     };
 }
 

@@ -1,5 +1,6 @@
 #include "engine/assets/assets.hpp"
 #include "engine/game/animation/animation_data.hpp"
+#include "raylib.h"
 
 #include <iostream>
 
@@ -16,6 +17,10 @@ namespace Blossom {
             UnloadTexture(pair.second);
         }
 
+        for (std::pair<std::string, Sound> pair : sounds) {
+            UnloadSound(pair.second);
+        }
+
         animations.clear();
         animationReferences.clear();
 
@@ -25,14 +30,29 @@ namespace Blossom {
     }
 
     void Assets::clean(void) {
-        std::map<std::string, Texture2D>::iterator iterator = textures.begin();
-        while (iterator != textures.end()) {
-            if (textureReferences[iterator->first] == 0) {
-                UnloadTexture(iterator->second);
-                textureReferences.erase(iterator->first);
-                iterator = textures.erase(iterator);
-            } else {
-                ++iterator;
+        {
+            std::map<std::string, Texture2D>::iterator iterator = textures.begin();
+            while (iterator != textures.end()) {
+                if (textureReferences[iterator->first] == 0) {
+                    UnloadTexture(iterator->second);
+                    textureReferences.erase(iterator->first);
+                    iterator = textures.erase(iterator);
+                } else {
+                    ++iterator;
+                }
+            }
+        }
+
+        {
+            std::map<std::string, Sound>::iterator iterator = sounds.begin();
+            while (iterator != sounds.end()) {
+                if (soundReferences[iterator->first] == 0) {
+                    UnloadSound(iterator->second);
+                    soundReferences.erase(iterator->first);
+                    iterator = sounds.erase(iterator);
+                } else {
+                    ++iterator;
+                }
             }
         }
     }
@@ -106,6 +126,36 @@ namespace Blossom {
             delete[] animations[fullPath].frames;
             animations.erase(fullPath);
             animationReferences.erase(fullPath);
+        }
+    }
+
+    Sound Assets::getSound(const char* path) {
+        std::string fullPath = getFullPath(path);
+        if (sounds.find(fullPath) == sounds.end()) {
+            sounds[fullPath] = LoadSound(fullPath.c_str());
+        }
+
+        soundReferences[fullPath] += 1;
+        return sounds[fullPath];
+    }
+
+    void Assets::dereferenceSound(const char* path) {
+        std::string fullPath = getFullPath(path);
+        if (soundReferences.find(fullPath) != soundReferences.end()) {
+            if (soundReferences[fullPath] == 0) {
+                std::cerr << "WARNING: Dereferencing texture that has no references left, most likely a double dereference! Path: " << fullPath << std::endl;
+            }
+
+            soundReferences[fullPath] -= 1;
+        }
+    }
+
+    void Assets::unloadSound(const char* path) {
+        std::string fullPath = getFullPath(path);
+        if (sounds.find(fullPath) != sounds.end()) {
+            UnloadSound(sounds[fullPath]);
+            soundReferences[fullPath] = 0;
+            sounds.erase(fullPath);
         }
     }
 }

@@ -209,10 +209,13 @@ namespace Blossom {
     }
 
     void Sprite::addAnimation(const char* id, const char* prefix, double frameRate, bool loop, Blossom::Vector2 offset) {
-        SpriteAnimation animation = {0};
-        animation.frameRate = frameRate;
-        animation.loop = loop;
-        animation.offset = offset;
+        SpriteAnimation animation = {
+            frameRate,
+            loop,
+            nullptr,
+            0,
+            offset
+        };
 
         for (size_t i = 0; i < animationData.framesCount; i++) {
             AnimationFrame frame = animationData.frames[i];

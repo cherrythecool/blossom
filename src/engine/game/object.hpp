@@ -18,14 +18,14 @@ namespace Blossom {
     class Object {
         public:
             std::vector<Object*> children;
-    
+
             Object();
             virtual ~Object();
-    
+
             virtual void append(Object* child);
             virtual void erase(Object* child);
             virtual Object* popBack(void);
-    
+
             virtual void event(ObjectEvent event);
     };
 }
